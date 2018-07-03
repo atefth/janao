@@ -1,0 +1,1 @@
+Janao::Postmen.config {|postman| postman.adapter = 'Mailgun' }

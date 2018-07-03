@@ -1,5 +1,4 @@
-require "janao/railtie"
-require "janao/acts_as_broadcaster"
+require "janao/engine"
 
 module Janao
   # Your code goes here...

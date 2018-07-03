@@ -1,4 +1,3 @@
-require 'byebug'
 require_relative 'services/services'
 
 module Janao
@@ -38,6 +37,7 @@ module Janao
 					def initialize(attributes)
 						instance_variable_set("@#{self.broadcast_channels_text_field}", self.class.send("#{self.broadcast_channels_text_field}"))
 						instance_variable_set("@#{self.broadcast_templates_text_field}", self.class.send("#{self.broadcast_templates_text_field}"))
+
 						super
 					end 
 				end
