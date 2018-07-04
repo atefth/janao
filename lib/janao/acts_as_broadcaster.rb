@@ -5,13 +5,26 @@ module Janao
 		extend ActiveSupport::Concern
 
 		included do
+			def respond_to?(method_name, include_private = false)
+				case method_name.to_s
+				when self.class.try(:broadcast_templates_setter_text_field)
+					return true
+				when self.class.try(:broadcast_channels_setter_text_field)
+					return true
+				when self.class.try(:broadcast_method_text_field)
+					return true
+				else
+					super
+				end
+		  end
+
 			def method_missing(symbol, *args, &block)
 				case symbol.to_s
-					when self.class.broadcast_templates_setter_text_field
+					when self.class.try(:broadcast_templates_setter_text_field)
 						BroadcasterBuilder.build(:set_templates, self, *args)
-					when self.class.broadcast_channels_setter_text_field
+					when self.class.try(:broadcast_channels_setter_text_field)
 						BroadcasterBuilder.build(:set_channels, self, *args)
-					when self.class.broadcast_method_text_field
+					when self.class.try(:broadcast_method_text_field)
 						BroadcasterBuilder.build(:broadcast, self, *args)
 					else
 						super
@@ -21,7 +34,6 @@ module Janao
 
 		class_methods do
 			def acts_as_broadcaster(**options)
-				cattr_reader :broadcaster_text_field, default: (options[:broadcaster_text_field] || :broadcaster).to_s
 				cattr_reader :broadcast_channels_text_field, default: (options[:broadcast_channels_text_field] || :broadcast_channels).to_s
 				cattr_reader "#{self.broadcast_channels_text_field}", default:  %i{email sms push}
 				cattr_reader :broadcast_channels_setter_text_field, default: (options[:broadcast_channels_setter_text_field] || :set_broadcast_channels).to_s

@@ -7,6 +7,7 @@ module Janao
 
 		def self.build(name, model, *args)
 			builder = BroadcasterBuilder.new(model)
+
 			case name
 			when :set_templates
 				builder.set_templates(*args)
