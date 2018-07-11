@@ -63,28 +63,34 @@ module Janao
     
     mattr_accessor :company_title, default: nil
     
+    # Config Janao::Postman to send email and sms notifications
+    # Alias method is .setup of .config, you can use both
+    #
+    # Example:
+    #   Janao::Postman.setup do |config|
+    #     # Use only to send email?
+    #     config.send_email                   = true
+    #     config.send_sms                     = true
+    #     config.email_adapter                = 'MailGun'
+    #     config.sms_adapter                  = 'Custom'
+    #     # Optional parameters
+    #     config.mailer_configuration.key     = 'Some sort of identification key'
+    #     config.mailer_configuration.secret  = 'Don\'t disclose your secret'
+    #     config.sms_configuration.username   = 'iirfann'
+    #     config.sms_configuration.password   = 'Passw0rd'
+    #     config.common_header                = "<h2>Hay Man</h2>"
+    #     config.copyright_message            = "Copyright at Your Company @ 2018"
+    #   end
+    
     def config
-      # Janao::Postman.setup do |config|
-      #   Use only to send email?
-      #   config.send_email                   = true
-      #   config.send_sms                     = true
-      #   config.email_adapter                = 'MailGun'
-      #   config.sms_adapter                  = 'Custom'
-      #   # Optional parameters
-      #   config.mailer_configuration.key     = 'Some sort of identification key'
-      #   config.mailer_configuration.secret  = 'Don\'t disclose your secret'
-      #   config.sms_configuration.username   = 'iirfann'
-      #   config.sms_configuration.password   = 'Passw0rd'
-      #   config.common_header                = "<h2>Hay Man</h2>"
-      #   config.copyright_message            = "Copyright at Your Company @ 2018"
-      # end
-      
       yield self
     end
     
     alias_method :setup, :config
     
-    # Send notifications!
+    # Just use .() to Send notifications!
+    # .()
+    #
     # @param[Hash] emails to send emails
     # @param[Array] emails[:to] collection of emails to be used in to
     # @param[Array] emails[:cc] collection of emails to be used in cc
@@ -116,6 +122,7 @@ module Janao
         sms_template_name = options.fetch(:sms_template_name) || nil
         sms_params        = options.fetch(:sms_params, {})
         sms_adapter_klass = SMS_ADAPTERS[Janao::Postman.sms_adapter]
+        
         sms_adapter_klass.(sms_template_name, numbers, options.fetch(:sms_options, {}), sms_params)
       end
     end
