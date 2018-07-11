@@ -1,1 +1,3 @@
-Janao::Postman.config {|postman| postman.adapter = 'Mailgun' }
+Janao::Postman.setup do |config|
+  config.email_adapter = 'Mailgun'
+end

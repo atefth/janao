@@ -1,6 +1,6 @@
 module Janao
   module Postman
-    class MailgunPostman < Base
+    class MailGunPostman < Base
       def self.call(name, *options)
         data = options.extract_options!
         
