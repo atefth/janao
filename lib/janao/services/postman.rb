@@ -4,7 +4,7 @@ require_relative 'postman/mailgun_postman'
 module Janao
   module Postman
     
-    ADAPTER_MAPPINGS = {
+    EMAIL_ADAPTERS = {
         'MailGun' => MailgunPostman
     }
     
@@ -16,17 +16,30 @@ module Janao
     ToEmailNotProvided           = Class.new(ArgumentError)
     AdapterNotSpecified          = Class.new(StandardError)
     PostmanMethodNotImplemented  = Class.new(NotImplementedError)
+    SmsOrEmailShouldBeSwitchedOn = Class.new(StandardError)
     EmailTemplateNameNotProvided = Class.new(StandardError)
-
+    
+    mattr_accessor :send_email, default: true
+    
     # Adapter to be set!
     mattr_accessor :adapter, default: 'MailGun'
     
+    # Should postman send sms as well?
+    mattr_accessor :send_sms, default: true
+    
+    # Sms length should be
+    mattr_accessor :sms_length, default: 160
+    
     # Adapter related configurations to be set, Default: ActiveSupport::OrderedOptions.new
-    mattr_accessor :adapter_configuration, default: ActiveSupport::OrderedOptions.new
+    mattr_accessor :mailer_configuration, default: ActiveSupport::OrderedOptions.new
+    
+    # Configuration for SMS Configuration
+    mattr_accessor :sms_configuration, default: ActiveSupport::OrderedOptions.new
     
     # Dynamic token validation for email template, Default: true
     mattr_accessor :validate_template_token, default: true
     
+    # Template related settings
     mattr_accessor :common_footer, default: nil
     
     mattr_accessor :common_header, default: nil
@@ -42,10 +55,15 @@ module Janao
     
     def config
       # Janao::Postman.config do |config|
+      #   Use only to send email?
+      #   config.send_email                   = true
+      #   config.send_sms                     = true
       #   config.adapter                      = 'MailGun'
       #   # Optional parameters
-      #   config.adapter_configuration.key    = 'Some sort of identification key'
-      #   config.adapter_configuration.secret = 'Don\'t disclose your secret'
+      #   config.mailer_configuration.key     = 'Some sort of identification key'
+      #   config.mailer_configuration.secret  = 'Don\'t disclose your secret'
+      #   config.sms_configuration.username   = 'iirfann'
+      #   config.sms_configuration.password   = 'Passw0rd'
       #   config.common_header                = "<h2>Hay Man</h2>"
       #   config.copyright_message            = "Copyright at Your Company @ 2018"
       # end
@@ -54,15 +72,20 @@ module Janao
     end
     
     def call(*args)
-      adapter_klass = ADAPTER_MAPPINGS.fetch(
+      options = args.extract_options!
+      
+      adapter_klass = EMAIL_ADAPTERS.fetch(
           adapter,
-          ( raise AdapterNotValid, 'please provide a valid adapter, Example: Mailgun, ActionMailer' )
+          (raise AdapterNotValid, 'please provide a valid adapter, Example: Mailgun, ActionMailer')
       ) # Example: MailgunPostman
       
-      options       = args.extract_options!
-      name          = options.fetch(:name, (raise EmailTemplateNameNotProvided, 'please provide an email template'))
+      name       = options.fetch(:name, (raise EmailTemplateNameNotProvided, 'please provide an email template'))
+      send_sms   = options.fetch(:send_sms, Janao::Postman.send_sms) || false
+      send_email = options.fetch(:send_email, Janao::Postman.send_email) || false
       
-      adapter_klass.(name, *options)
+      raise SmsOrEmailShouldBeSwitchedOn, 'please switch on at least on medium (email or sms or both)' unless send_email && send_sms
+      
+      adapter_klass.(name, *options) if send_email
     end
   end
 end
