@@ -1,4 +1,4 @@
-require "janao/railtie"
+require "janao/engine"
 
 module Janao
   # Your code goes here...

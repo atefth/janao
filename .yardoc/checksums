@@ -1,0 +1,12 @@
+lib/janao.rb 3657eabcba0eddaa810d766f391cdce2eeaeaf45
+lib/janao/engine.rb 6a959b5092b51f1d160b529e4bed4a77337b8058
+lib/janao/railtie.rb f97cceb462bd3177ef71d3a5996914c89488e892
+lib/janao/version.rb 3c78f6edbac824e2d036275665b541cab388a485
+lib/janao/services/postman.rb ba2f3777417c01afb56d03f2f71b58cb746dd2c8
+lib/janao/services/services.rb d1fdf42783c1805af91a8c6d1f604a990fe98ad8
+lib/janao/acts_as_broadcaster.rb 6994403e6ac22265318a0896f01698bf5c218546
+lib/janao/services/postman/base.rb 12c1fe01bef04e4bf51ddf00e69512ba1e32c1ba
+lib/janao/services/broadcaster_builder.rb ed4e6639ea47cee3d97c2843f0ebf796d483bdc8
+lib/janao/services/mailer_configuration.rb da39a3ee5e6b4b0d3255bfef95601890afd80709
+lib/janao/services/postman/mail_gun_postman.rb 64cce6ecab8133886a83de326ecef42e2e582e43
+lib/janao/services/postman/custom_sms_gateway.rb e95f7ee7099ed207585232bcce73aa6cad7e6971
